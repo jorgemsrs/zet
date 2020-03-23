@@ -33,7 +33,9 @@ func main() {
 		var title string
 		var mtime int
 		err2 := raw_existing.Scan(&title, &mtime)
-		if err2 != nil { panic(err2) }
+		if err2 != nil {
+			panic(err2)
+		}
 		existing[title] = mtime
 	}
 
@@ -44,21 +46,23 @@ func main() {
 
 		// Any file that's been modified since its entry in the full-text search index
 		// will get updated (or if it doesn't exist, of course).
-		if !existing[path]
-			contents = File.read(path)
-			tags = contents.scan(/#[\w-]+/).join(" ")
-			db.execute(<<-SQL, [path, contents, tags, File.stat(path).mtime.to_s])
-			INSERT INTO zettelkasten (title, body, tags, mtime) VALUES (?, ?, ?, ?);
-			SQL
-		elsif mtime.to_i > existing[path] # to_i because the stat may have more precision
-			contents = File.read(path)
-			tags = contents.scan(/#[\w-]+/).join(" ")
-			db.execute(<<-SQL, [contents, tags, mtime.to_s, path])
-			UPDATE zettelkasten SET body = ?, tags = ?, mtime = ? WHERE title = ?
-			SQL
-		end
+		/*
+			if !existing[path]
+				contents = File.read(path)
+				tags = contents.scan(/#[\w-]+/).join(" ")
+				db.execute(<<-SQL, [path, contents, tags, File.stat(path).mtime.to_s])
+				INSERT INTO zettelkasten (title, body, tags, mtime) VALUES (?, ?, ?, ?);
+				SQL
+			elsif mtime.to_i > existing[path] # to_i because the stat may have more precision
+				contents = File.read(path)
+				tags = contents.scan(/#[\w-]+/).join(" ")
+				db.execute(<<-SQL, [contents, tags, mtime.to_s, path])
+				UPDATE zettelkasten SET body = ?, tags = ?, mtime = ? WHERE title = ?
+				SQL
+			end
 
-		existing[path] = 'VISITED'
+			existing[path] = 'VISITED'
+		*/
 	}
 }
 
